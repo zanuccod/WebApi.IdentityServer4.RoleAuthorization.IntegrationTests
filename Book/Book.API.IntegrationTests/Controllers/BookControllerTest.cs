@@ -37,7 +37,7 @@ namespace Book.API.IntegrationTests.Controllers
         public async Task Get_Authenticated_ShouldReturnAllBooks()
         {
             // Arrange
-            client.SetBearerToken(await GetToken());
+            client.SetBearerToken(await GetToken(GRANT_TYPE_ADMIN));
 
             // Act
             var response = await client
@@ -61,6 +61,24 @@ namespace Book.API.IntegrationTests.Controllers
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+
+        [Theory]
+        [InlineData(GRANT_TYPE_ADMIN, HttpStatusCode.OK)]
+        [InlineData("custom_admin_2", HttpStatusCode.Unauthorized)]
+        public async Task FindAllAsync_UnauthorizedRole_ShouldReturn_Unauthorized(string role, HttpStatusCode expctedStatusCode)
+        {
+            // Arrange
+            client.SetBearerToken(await GetToken(role));
+
+            // Act
+            var response = await client
+                .GetAsync(_baseAddress)
+                .ConfigureAwait(false);
+
+            // Assert
+            Assert.Equal(expctedStatusCode, response.StatusCode);
         }
     }
 }

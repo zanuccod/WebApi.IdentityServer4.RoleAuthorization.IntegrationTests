@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Book.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class BookController : Controller
     {
         [HttpGet]
